@@ -8,6 +8,8 @@ class Ticket(Resource):
     parser.add_argument('seat_num')
     parser.add_argument('quantity')
     parser.add_argument('price')
+    parser.add_argument('event_id')
+    parser.add_argument('order_id')
 
     def get(self, id):
         try:
@@ -48,6 +50,8 @@ class TicketPost(Resource):
     parser.add_argument('seat_num')
     parser.add_argument('quantity')
     parser.add_argument('price')
+    parser.add_argument('event_id')
+    parser.add_argument('order_id')
 
     def post(self):
         data = TicketPost.parser.parse_args()
