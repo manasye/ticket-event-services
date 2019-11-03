@@ -17,8 +17,6 @@ class OrderModel(db.Model):
     def json(self):
         tickets = TicketModel.find_by_order(self.id)
 
-        print(tickets)
-
         return {
             'id': self.id,
             'order_date': self.order_date,

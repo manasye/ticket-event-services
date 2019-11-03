@@ -52,6 +52,14 @@ class Event(Resource):
         return event.json()
 
 
+class EventSearch(Resource):
+    def get(self, search_term):
+        events = EventModel.query.filter(
+            EventModel.name.like('%'+search_term+'%')).all()
+
+        return {'events': [event.json() for event in events]}
+
+
 class EventPost(Resource):
 
     parser = reqparse.RequestParser()

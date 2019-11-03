@@ -66,6 +66,11 @@ class TicketPost(Resource):
         return ticket.json(), 201
 
 
+class TicketOrder(Resource):
+    def get(self, id):
+        return {'tickets': [ticket.json() for ticket in TicketModel.find_by_order(id)]}
+
+
 class TicketList(Resource):
     def get(self):
         return {'tickets': [ticket.json() for ticket in TicketModel.query.all()]}

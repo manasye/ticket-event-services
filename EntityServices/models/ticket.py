@@ -27,24 +27,14 @@ class TicketModel(db.Model):
     def json(self):
         event = EventModel.find_by_id(self.event_id)
 
-        if (event):
-            return {
-                'id': self.id,
-                'price': self.price,
-                'quantity': self.quantity,
-                'seat_num': self.seat_num,
-                'event': event.json(),
-                'order_id': self.order_id
-            }
-
-        else:
-            return {
-                'id': self.id,
-                'price': self.price,
-                'quantity': self.quantity,
-                'seat_num': self.seat_num,
-                'order_id': self.order_id
-            }
+        return {
+            'id': self.id,
+            'price': self.price,
+            'quantity': self.quantity,
+            'seat_num': self.seat_num,
+            'event': event.json(),
+            'order_id': self.order_id
+        }
 
     @classmethod
     def find_by_id(cls, id):

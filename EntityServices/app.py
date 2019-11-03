@@ -3,8 +3,8 @@ from flask_restful import Api
 from flask_jwt import JWT
 
 from security import authenticate, identity
-from resources.event import EventPost, EventList, Event
-from resources.ticket import TicketPost, TicketList, Ticket
+from resources.event import EventPost, EventList, EventSearch, Event
+from resources.ticket import TicketPost, TicketList, Ticket, TicketOrder
 from resources.order import OrderPost, OrderList, Order
 from resources.user import UserRegister
 
@@ -25,7 +25,9 @@ jwt = JWT(app, authenticate, identity)  # /auth
 api.add_resource(EventPost, '/event')
 api.add_resource(Event, '/event/<string:id>')
 api.add_resource(EventList, '/events')
+api.add_resource(EventSearch, '/events/search/<string:search_term>')
 api.add_resource(TicketPost, '/ticket')
+api.add_resource(TicketOrder, '/ticket/order/<string:id>')
 api.add_resource(Ticket, '/ticket/<string:id>')
 api.add_resource(TicketList, '/tickets')
 api.add_resource(OrderPost, '/order')
