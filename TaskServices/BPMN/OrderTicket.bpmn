@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_156dsai" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_156dsai" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
   <bpmn:collaboration id="Collaboration_1hs8648">
     <bpmn:participant id="Participant_1uw6mwb" name="E-Ticketing" processRef="Process_1h50yw4" />
     <bpmn:participant id="Participant_07xny93" name="Payment Service" processRef="Process_0hpcy7g" />
@@ -9,11 +9,11 @@
   <bpmn:process id="Process_1h50yw4" isExecutable="true">
     <bpmn:laneSet id="LaneSet_16dfbs5">
       <bpmn:lane id="Lane_0kkvo4a" name="Sistem">
-        <bpmn:flowNodeRef>Task_0npfejk</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_1t6cbua</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_09461ow</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0l9nh3t</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1gtt030</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_0npfejk</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1ydkhpd" name="Pengguna">
         <bpmn:flowNodeRef>Task_03fw2nn</bpmn:flowNodeRef>
@@ -23,10 +23,6 @@
         <bpmn:flowNodeRef>EndEvent_1o71zjf</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:task id="Task_0npfejk" name="Membuat pesanan">
-      <bpmn:incoming>SequenceFlow_16bd1x7</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0uftjt5</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:userTask id="Task_03fw2nn" name="Melakukan pembayaran">
       <bpmn:incoming>SequenceFlow_0uftjt5</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1pm02ma</bpmn:incoming>
@@ -82,6 +78,10 @@
     <bpmn:startEvent id="StartEvent_1gtt030" name="Pesanan tiket diterima">
       <bpmn:outgoing>SequenceFlow_16bd1x7</bpmn:outgoing>
     </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_0npfejk" name="Membuat pesanan" camunda:type="external" camunda:topic="create-order">
+      <bpmn:incoming>SequenceFlow_16bd1x7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0uftjt5</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:process id="Process_0hpcy7g" isExecutable="false" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -105,16 +105,13 @@
         <di:waypoint x="298" y="440" />
         <di:waypoint x="430" y="440" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_0npfejk_di" bpmnElement="Task_0npfejk">
-        <dc:Bounds x="430" y="400" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1g15bs5_di" bpmnElement="Task_03fw2nn">
         <dc:Bounds x="580" y="560" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0uftjt5_di" bpmnElement="SequenceFlow_0uftjt5">
         <di:waypoint x="530" y="440" />
-        <di:waypoint x="555" y="440" />
-        <di:waypoint x="555" y="600" />
+        <di:waypoint x="560" y="440" />
+        <di:waypoint x="560" y="600" />
         <di:waypoint x="580" y="600" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_1ufjez5_di" bpmnElement="IntermediateThrowEvent_06egu93">
@@ -201,6 +198,9 @@
           <dc:Bounds x="1163" y="582" width="28" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0c8krzd_di" bpmnElement="Task_0npfejk">
+        <dc:Bounds x="430" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
