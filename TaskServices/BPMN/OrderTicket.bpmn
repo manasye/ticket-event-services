@@ -73,8 +73,12 @@
     <bpmn:sequenceFlow id="SequenceFlow_16fsge3" name="Ya" sourceRef="ExclusiveGateway_09461ow" targetRef="Task_0fydn7d">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${payment_success}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1pm02ma" name="Ya" sourceRef="ExclusiveGateway_10i0yyv" targetRef="Task_03fw2nn" />
-    <bpmn:sequenceFlow id="SequenceFlow_0niwhzd" name="Tidak" sourceRef="ExclusiveGateway_10i0yyv" targetRef="EndEvent_1o71zjf" />
+    <bpmn:sequenceFlow id="SequenceFlow_1pm02ma" name="Ya" sourceRef="ExclusiveGateway_10i0yyv" targetRef="Task_03fw2nn">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${retry}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0niwhzd" name="Tidak" sourceRef="ExclusiveGateway_10i0yyv" targetRef="EndEvent_1o71zjf">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!retry}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:startEvent id="StartEvent_1gtt030" name="Pesanan tiket diterima">
       <bpmn:outgoing>SequenceFlow_16bd1x7</bpmn:outgoing>
     </bpmn:startEvent>
