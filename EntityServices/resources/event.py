@@ -25,6 +25,7 @@ class Event(Resource):
 
         return {'message': 'Event not found'}, 404  # not-found
 
+    @jwt_required()
     def delete(self, id):
         event = EventModel.find_by_id(id)
         if event:
@@ -32,6 +33,7 @@ class Event(Resource):
 
         return {'message': 'Event deleted'}
 
+    @jwt_required()
     def put(self, id):
         data = Event.parser.parse_args()
         event = EventModel.find_by_id(id)
@@ -39,14 +41,14 @@ class Event(Resource):
         if event is None:
             event = EventModel(**data)
         else:
-            event.name = data['name']
-            event.category = data['category']
-            event.location = data['location']
-            event.start_time = data['start_time']
-            event.end_time = data['end_time']
-            event.event_date = data['event_date']
-            event.owner = data['owner']
-            event.status = data['status']
+            event.name = data['name'] or event.name
+            event.category = data['category'] or event.category
+            event.location = data['location'] or event.location
+            event.start_time = data['start_time'] or event.start_time
+            event.end_time = data['end_time'] or event.end_time
+            event.event_date = data['event_date'] or event.event_date
+            event.owner = data['owner'] or event.owner
+            event.status = data['status'] or event.status
 
         event.save_to_db()
         return event.json()
@@ -72,6 +74,7 @@ class EventPost(Resource):
     parser.add_argument('owner')
     parser.add_argument('status')
 
+    @jwt_required()
     def post(self):
         data = EventPost.parser.parse_args()
         event = EventModel(**data)
@@ -83,6 +86,13 @@ class EventPost(Resource):
             return {'message': 'An error occured inserting the event'}, 500
 
         return event.json(), 201
+
+
+class EventBook(Resource):
+
+    @jwt_required()
+    def post(self, id):
+        pass
 
 
 class EventList(Resource):

@@ -36,9 +36,9 @@ class Ticket(Resource):
         if ticket is None:
             ticket = TicketModel(**data)
         else:
-            ticket.seat_num = data['seat_num']
-            ticket.price = data['price']
-            ticket.quantity = data['quantity']
+            ticket.seat_num = data['seat_num'] or ticket.seat_num
+            ticket.price = data['price'] or ticket.price
+            ticket.quantity = data['quantity'] or ticket.quantity
 
         ticket.save_to_db()
         return ticket.json()

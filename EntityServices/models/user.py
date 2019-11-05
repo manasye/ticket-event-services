@@ -12,22 +12,30 @@ class UserModel(db.Model):
     password = db.Column(db.String(80))
     email = db.Column(db.String(80))
     phone_number = db.Column(db.String(80))
+    role = db.Column(db.String(80))
 
-    def __init__(self, username, password, name, email, phone_number):
+    def __init__(self, username, password, name, email, phone_number, role):
         self.username = username
         self.password = password
         self.name = name
         self.email = email
         self.phone_number = phone_number
+        self.role = role
 
     def json(self):
         return {
+            'id': self.id,
             'username': self.username,
             'name': self.name,
             'email': self.email,
             'phone_number': self.phone_number,
+            'role': self.role,
         }
 
+    @classmethod
+    def find_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
+    
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
@@ -35,11 +43,11 @@ class UserModel(db.Model):
     @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).all()
-    
+
     @classmethod
     def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
-    
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()

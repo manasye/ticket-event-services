@@ -34,7 +34,7 @@ class Order(Resource):
         if order is None:
             order = OrderModel(**data)
         else:
-            order.order_date = data['order_date']
+            order.order_date = data['order_date'] or order.order_date
 
         order.save_to_db()
         return order.json()
