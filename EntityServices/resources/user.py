@@ -14,7 +14,6 @@ class UserRegister(Resource):
     parser.add_argument('phone_number', required=True)
     parser.add_argument('role', required=True)
 
-    @jwt_required()
     def post(self):
         data = UserRegister.parser.parse_args()
 
@@ -59,13 +58,13 @@ class User(Resource):
     def put(self, id):
 
         if (int(id) == current_identity.id):
-
-            data = User.parser.parse_args()
-            user = UserModel.find_by_id(id)
-
+            
             if (data['role']):
                 if (data['role'] != "customer" and data['role'] != "partner"):
                     return {'message': 'Invalid role'}, 400
+
+            data = User.parser.parse_args()
+            user = UserModel.find_by_id(id)
 
             if user is None:
                 if UserModel.find_by_username(data['username']):
@@ -86,3 +85,11 @@ class User(Resource):
 
         else:
             return {'message': 'Method not allowed for this user'}, 400
+
+
+
+class UserList(Resource):
+
+    @jwt_required()
+    def get(self):
+        return {'users': [user.json() for user in UserModel.query.all()]}

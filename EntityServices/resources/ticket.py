@@ -11,6 +11,7 @@ class Ticket(Resource):
     parser.add_argument('event_id')
     parser.add_argument('order_id')
 
+    @jwt_required()
     def get(self, id):
         try:
             ticket = TicketModel.find_by_id(id)
@@ -22,6 +23,7 @@ class Ticket(Resource):
 
         return {'message': 'Ticket not found'}, 404  # not-found
 
+    @jwt_required()
     def delete(self, id):
         ticket = TicketModel.find_by_id(id)
         if ticket:
@@ -29,6 +31,7 @@ class Ticket(Resource):
 
         return {'message': 'Ticket deleted'}
 
+    @jwt_required()
     def put(self, id):
         data = Ticket.parser.parse_args()
         ticket = TicketModel.find_by_id(id)
@@ -53,6 +56,7 @@ class TicketPost(Resource):
     parser.add_argument('event_id')
     parser.add_argument('order_id')
 
+    @jwt_required()
     def post(self):
         data = TicketPost.parser.parse_args()
         ticket = TicketModel(**data)
@@ -67,10 +71,14 @@ class TicketPost(Resource):
 
 
 class TicketOrder(Resource):
+    
+    @jwt_required()
     def get(self, id):
         return {'tickets': [ticket.json() for ticket in TicketModel.find_by_order(id)]}
 
 
 class TicketList(Resource):
+
+    @jwt_required()
     def get(self):
         return {'tickets': [ticket.json() for ticket in TicketModel.query.all()]}

@@ -6,7 +6,7 @@ from security import authenticate, identity
 from resources.event import EventPost, EventList, EventSearch, Event, EventBook
 from resources.ticket import TicketPost, TicketList, Ticket, TicketOrder
 from resources.order import OrderPost, OrderList, Order
-from resources.user import UserRegister, User
+from resources.user import UserRegister, User, UserList
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -37,6 +37,7 @@ api.add_resource(Order, '/order/<string:id>')
 api.add_resource(OrderList, '/orders')
 api.add_resource(UserRegister, '/user')
 api.add_resource(User, '/user/<string:id>')
+api.add_resource(UserList, '/users')
 
 
 if __name__ == '__main__':

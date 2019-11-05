@@ -9,6 +9,7 @@ class Order(Resource):
     parser.add_argument('order_date')
     parser.add_argument('user_id')
 
+    @jwt_required()
     def get(self, id):
         try:
             order = OrderModel.find_by_id(id)
@@ -20,6 +21,7 @@ class Order(Resource):
 
         return {'message': 'Order not found'}, 404  # not-found
 
+    @jwt_required()
     def delete(self, id):
         order = OrderModel.find_by_id(id)
         if order:
@@ -27,6 +29,7 @@ class Order(Resource):
 
         return {'message': 'Order deleted'}
 
+    @jwt_required()
     def put(self, id):
         data = Order.parser.parse_args()
         order = OrderModel.find_by_id(id)
@@ -46,6 +49,7 @@ class OrderPost(Resource):
     parser.add_argument('order_date')
     parser.add_argument('user_id')
 
+    @jwt_required()
     def post(self):
         data = OrderPost.parser.parse_args()
         order = OrderModel(**data)
@@ -60,5 +64,7 @@ class OrderPost(Resource):
 
 
 class OrderList(Resource):
+    
+    @jwt_required()
     def get(self):
         return {'orders': [order.json() for order in OrderModel.query.all()]}
