@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required, current_identity
 from models.event import EventModel
+from sqlalchemy import desc, asc
+import datetime
 
 
 class Event(Resource):
@@ -37,6 +39,13 @@ class Event(Resource):
     @jwt_required()
     def put(self, id):
         data = Event.parser.parse_args()
+        data.start_time = datetime.datetime.strptime(
+            data.start_time, '%Y-%m-%d %H:%M:%S')
+        data.end_time = datetime.datetime.strptime(
+            data.end_time, '%Y-%m-%d %H:%M:%S')
+        data.event_date = datetime.datetime.strptime(
+            data.event_date, '%Y-%m-%d %H:%M:%S')
+        
         event = EventModel.find_by_id(id)
 
         if event is None:
@@ -50,6 +59,7 @@ class Event(Resource):
             event.event_date = data['event_date'] or event.event_date
             event.owner = data['owner'] or event.owner
             event.status = data['status'] or event.status
+            event.quota = data['quota'] or event.quota
 
         event.save_to_db()
         return event.json()
@@ -79,12 +89,20 @@ class EventPost(Resource):
     @jwt_required()
     def post(self):
         data = EventPost.parser.parse_args()
+        data.start_time = datetime.datetime.strptime(
+            data.start_time, '%Y-%m-%d %H:%M:%S')
+        data.end_time = datetime.datetime.strptime(
+            data.end_time, '%Y-%m-%d %H:%M:%S')
+        data.event_date = datetime.datetime.strptime(
+            data.event_date, '%Y-%m-%d %H:%M:%S')
+
         event = EventModel(**data)
 
         try:
             event.save_to_db()
 
-        except:
+        except Exception as e:
+            print('Err: ' + str(e))
             return {'message': 'An error occured inserting the event'}, 500
 
         return event.json(), 201
@@ -100,3 +118,13 @@ class EventBook(Resource):
 class EventList(Resource):
     def get(self):
         return {'events': [event.json() for event in EventModel.query.all()]}
+
+
+class EventSortTime(Resource):
+    def get(self, type):
+        if (type == 'desc'):
+            return {'events': [event.json() for event in EventModel.query.order_by(desc(EventModel.start_time)).all()]}
+        elif (type == 'asc'):
+            return {'events': [event.json() for event in EventModel.query.order_by(asc(EventModel.start_time)).all()]}
+        else:
+            return {'message': 'Type is incorrect'}, 500

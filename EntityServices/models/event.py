@@ -9,9 +9,9 @@ class EventModel(db.Model):
     name = db.Column(db.String(80))
     category = db.Column(db.String(80))
     location = db.Column(db.String(80))
-    start_time = db.Column(db.String(80))
-    end_time = db.Column(db.String(80))
-    event_date = db.Column(db.String(80))
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
+    event_date = db.Column(db.DateTime)
     owner = db.Column(db.String(80))
     status = db.Column(db.Integer)
     quota = db.Column(db.Integer)
@@ -33,9 +33,9 @@ class EventModel(db.Model):
             'name': self.name,
             'category': self.category,
             'location': self.location,
-            'start_time': self.start_time,
-            'end_time': self.end_time,
-            'event_date': self.event_date,
+            'start_time': self.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'end_time': self.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'event_date': self.event_date.strftime('%Y-%m-%d %H:%M:%S'),
             'owner': self.owner,
             'status': self.status,
             'quota': self.quota

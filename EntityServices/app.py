@@ -3,7 +3,7 @@ from flask_restful import Api
 from flask_jwt import JWT
 
 from security import authenticate, identity
-from resources.event import EventPost, EventList, EventSearch, Event, EventBook
+from resources.event import EventPost, EventList, EventSearch, Event, EventBook, EventSortTime
 from resources.ticket import TicketPost, TicketList, Ticket, TicketOrder
 from resources.order import OrderPost, OrderList, Order
 from resources.user import UserRegister, User, UserList
@@ -28,6 +28,7 @@ api.add_resource(Event, '/event/<string:id>')
 api.add_resource(EventList, '/events')
 api.add_resource(EventSearch, '/events/search/<string:search_term>')
 api.add_resource(EventBook, '/events/book/<string:id>')
+api.add_resource(EventSortTime, '/events/sort-time/<string:type>')
 api.add_resource(TicketPost, '/ticket')
 api.add_resource(TicketOrder, '/ticket/order/<string:id>')
 api.add_resource(Ticket, '/ticket/<string:id>')
