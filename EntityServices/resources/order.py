@@ -64,7 +64,18 @@ class OrderPost(Resource):
 
 
 class OrderList(Resource):
-    
+
     @jwt_required()
     def get(self):
         return {'orders': [order.json() for order in OrderModel.query.all()]}
+
+
+class OrderUser(Resource):
+
+    @jwt_required()
+    def get(self, user_id):
+
+        if (int(user_id) == current_identity.id):
+            return {'orders': [order.json() for order in OrderModel.query.filter_by(user_id=int(user_id)).all()]}
+        else:
+            return {'message': 'Method not allowed for this user'}, 400

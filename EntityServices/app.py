@@ -5,7 +5,7 @@ from flask_jwt import JWT
 from security import authenticate, identity
 from resources.event import EventPost, EventList, EventSearch, Event, EventBook, EventSortTime
 from resources.ticket import TicketPost, TicketList, Ticket, TicketOrder
-from resources.order import OrderPost, OrderList, Order
+from resources.order import OrderPost, OrderList, Order, OrderUser
 from resources.user import UserRegister, User, UserList
 
 app = Flask(__name__)
@@ -30,12 +30,13 @@ api.add_resource(EventSearch, '/events/search/<string:search_term>')
 api.add_resource(EventBook, '/events/book/<string:id>')
 api.add_resource(EventSortTime, '/events/sort-time/<string:type>')
 api.add_resource(TicketPost, '/ticket')
-api.add_resource(TicketOrder, '/ticket/order/<string:id>')
+api.add_resource(TicketOrder, '/tickets/order/<string:id>')
 api.add_resource(Ticket, '/ticket/<string:id>')
 api.add_resource(TicketList, '/tickets')
 api.add_resource(OrderPost, '/order')
 api.add_resource(Order, '/order/<string:id>')
 api.add_resource(OrderList, '/orders')
+api.add_resource(OrderUser, '/orders/user/<string:user_id>')
 api.add_resource(UserRegister, '/user')
 api.add_resource(User, '/user/<string:id>')
 api.add_resource(UserList, '/users')
