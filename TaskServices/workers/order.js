@@ -18,27 +18,53 @@ let instance;
 worker.subscribe('create-order', async function({ task, taskService }) {
   // Get a process variable
   const user_id = task.variables.get('user_id');
-  const order_date = task.variables.get('order_date');
+  const event_id = task.variables.get('event_id');
+  const seat_num = task.variables.get('seat_num');
+  const price = task.variables.get('price');
+  const quantity = task.variables.get('quantity');
+
+  const order_date = Date.now();
 
   let processVariables = new Variables();
   
-  if (user_id && order_date) {
-    const body = JSON.stringify({
-      user_id,
-      order_date
-    });
+  const body = JSON.stringify({
+    user_id,
+    order_date
+  });
 
-    instance = axios.create(axiosConfig);
-    try {
-      const res = await instance.post(`${restUrl}/order`, body);  
-      
-      console.log('Order created');
-      processVariables.set('order_id', res.data.id);
-    } catch (e) {
-      console.log(e);
-    }
+  instance = axios.create(axiosConfig);
+  try {
+    await instance.post(`${restUrl}/order`, body)
+      .then(async (res) => {
+        const order_id = res.data.id;
+        
+        console.log('Order created');
+
+        const ticketBody = JSON.stringify({
+          order_id,
+          event_id,
+          seat_num,
+          price,
+          quantity
+        });
+
+        await instance.post(`${restUrl}/ticket`, ticketBody)
+          .then((_) => {
+            processVariables.set('order_id', order_id);
+
+            console.log('Ticket created');
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  } catch (e) {
+    console.log(e);
+  } finally {
+    // Complete the task
+    await taskService.complete(task, processVariables);
   }
-
-  // Complete the task
-  await taskService.complete(task, processVariables);
 });
