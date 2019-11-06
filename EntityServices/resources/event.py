@@ -13,6 +13,7 @@ class Event(Resource):
     parser.add_argument('event_date')
     parser.add_argument('owner')
     parser.add_argument('status')
+    parser.add_argument('quota')
 
     def get(self, id):
         try:
@@ -73,6 +74,7 @@ class EventPost(Resource):
     parser.add_argument('event_date')
     parser.add_argument('owner')
     parser.add_argument('status')
+    parser.add_argument('quota')
 
     @jwt_required()
     def post(self):
