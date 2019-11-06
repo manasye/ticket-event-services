@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_156dsai" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
   <bpmn:collaboration id="Collaboration_1hs8648">
-    <bpmn:participant id="Participant_1uw6mwb" name="E-Ticketing" processRef="Process_1h50yw4" />
+    <bpmn:participant id="Participant_1uw6mwb" name="E-Ticketing" processRef="order-ticket" />
     <bpmn:participant id="Participant_07xny93" name="Payment Service" processRef="Process_0hpcy7g" />
-    <bpmn:messageFlow id="MessageFlow_01s67kx" sourceRef="IntermediateThrowEvent_06egu93" targetRef="Participant_07xny93" />
     <bpmn:messageFlow id="MessageFlow_1cb518o" sourceRef="Participant_07xny93" targetRef="Task_1t6cbua" />
+    <bpmn:messageFlow id="MessageFlow_01s67kx" sourceRef="IntermediateThrowEvent_06egu93" targetRef="Participant_07xny93" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_1h50yw4" isExecutable="true">
+  <bpmn:process id="order-ticket" isExecutable="true">
     <bpmn:laneSet id="LaneSet_16dfbs5">
       <bpmn:lane id="Lane_0kkvo4a" name="Sistem">
-        <bpmn:flowNodeRef>Task_1t6cbua</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_09461ow</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0l9nh3t</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1gtt030</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_0npfejk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_1t6cbua</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1ydkhpd" name="Pengguna">
         <bpmn:flowNodeRef>Task_03fw2nn</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>IntermediateThrowEvent_06egu93</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_10i0yyv</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_0fydn7d</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_1o71zjf</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_0fydn7d</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_06egu93</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:userTask id="Task_03fw2nn" name="Melakukan pembayaran">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="order_id" label="Order Id" type="long" />
+          <camunda:formField id="total_price" label="Total Price" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0uftjt5</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1pm02ma</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_190mrgl</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_06egu93">
-      <bpmn:incoming>SequenceFlow_190mrgl</bpmn:incoming>
-      <bpmn:messageEventDefinition />
-    </bpmn:intermediateThrowEvent>
-    <bpmn:receiveTask id="Task_1t6cbua" name="Menerima hasil pembayaran">
-      <bpmn:outgoing>SequenceFlow_0ph8dry</bpmn:outgoing>
-    </bpmn:receiveTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_09461ow" name="Pembayaran berhasil?">
       <bpmn:incoming>SequenceFlow_0ph8dry</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0w88pvx</bpmn:outgoing>
@@ -49,17 +48,12 @@
       <bpmn:outgoing>SequenceFlow_1pm02ma</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0niwhzd</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:task id="Task_0fydn7d" name="Menerima tiket">
-      <bpmn:incoming>SequenceFlow_16fsge3</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_14qst42</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:endEvent id="EndEvent_1o71zjf">
       <bpmn:incoming>SequenceFlow_14qst42</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0niwhzd</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_16bd1x7" sourceRef="StartEvent_1gtt030" targetRef="Task_0npfejk" />
     <bpmn:sequenceFlow id="SequenceFlow_0uftjt5" sourceRef="Task_0npfejk" targetRef="Task_03fw2nn" />
-    <bpmn:sequenceFlow id="SequenceFlow_190mrgl" sourceRef="Task_03fw2nn" targetRef="IntermediateThrowEvent_06egu93" />
     <bpmn:sequenceFlow id="SequenceFlow_0ph8dry" sourceRef="Task_1t6cbua" targetRef="ExclusiveGateway_09461ow" />
     <bpmn:sequenceFlow id="SequenceFlow_0w88pvx" name="Tidak" sourceRef="ExclusiveGateway_09461ow" targetRef="Task_0l9nh3t">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!payment_success}</bpmn:conditionExpression>
@@ -82,6 +76,18 @@
       <bpmn:incoming>SequenceFlow_16bd1x7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0uftjt5</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:task id="Task_0fydn7d" name="Menerima tiket">
+      <bpmn:incoming>SequenceFlow_16fsge3</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_14qst42</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:receiveTask id="Task_1t6cbua" name="Menerima hasil pembayaran">
+      <bpmn:outgoing>SequenceFlow_0ph8dry</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_06egu93">
+      <bpmn:incoming>SequenceFlow_190mrgl</bpmn:incoming>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_190mrgl" sourceRef="Task_03fw2nn" targetRef="IntermediateThrowEvent_06egu93" />
   </bpmn:process>
   <bpmn:process id="Process_0hpcy7g" isExecutable="false" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -114,27 +120,9 @@
         <di:waypoint x="560" y="600" />
         <di:waypoint x="580" y="600" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateThrowEvent_1ufjez5_di" bpmnElement="IntermediateThrowEvent_06egu93">
-        <dc:Bounds x="712" y="582" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_190mrgl_di" bpmnElement="SequenceFlow_190mrgl">
-        <di:waypoint x="680" y="600" />
-        <di:waypoint x="712" y="600" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_07xny93_di" bpmnElement="Participant_07xny93" isHorizontal="true">
         <dc:Bounds x="140" y="80" width="1070" height="250" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_01s67kx_di" bpmnElement="MessageFlow_01s67kx">
-        <di:waypoint x="730" y="582" />
-        <di:waypoint x="730" y="330" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ReceiveTask_1bmsmrk_di" bpmnElement="Task_1t6cbua">
-        <dc:Bounds x="790" y="400" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_1cb518o_di" bpmnElement="MessageFlow_1cb518o">
-        <di:waypoint x="840" y="330" />
-        <di:waypoint x="840" y="400" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_09461ow_di" bpmnElement="ExclusiveGateway_09461ow" isMarkerVisible="true">
         <dc:Bounds x="965" y="415" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -201,6 +189,24 @@
       <bpmndi:BPMNShape id="ServiceTask_0c8krzd_di" bpmnElement="Task_0npfejk">
         <dc:Bounds x="430" y="400" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_1bmsmrk_di" bpmnElement="Task_1t6cbua">
+        <dc:Bounds x="790" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1cb518o_di" bpmnElement="MessageFlow_1cb518o">
+        <di:waypoint x="840" y="330" />
+        <di:waypoint x="840" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1ufjez5_di" bpmnElement="IntermediateThrowEvent_06egu93">
+        <dc:Bounds x="712" y="582" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_190mrgl_di" bpmnElement="SequenceFlow_190mrgl">
+        <di:waypoint x="680" y="600" />
+        <di:waypoint x="712" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_01s67kx_di" bpmnElement="MessageFlow_01s67kx">
+        <di:waypoint x="730" y="582" />
+        <di:waypoint x="730" y="330" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
