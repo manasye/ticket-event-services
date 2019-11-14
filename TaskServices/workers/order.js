@@ -1,4 +1,5 @@
 const { Client, logger, Variables } = require('camunda-external-task-client-js');
+const moment = require('moment');
 let axios = require('axios');
 
 const config = { baseUrl: 'http://localhost:8080/engine-rest', use: logger, asyncResponseTimeout: 10000 };
@@ -19,10 +20,12 @@ let instance;
 worker.subscribe('create-order', async function({ task, taskService }) {
   // Get a process variable
   const user_id = task.variables.get('user_id');
+  const token = task.variables.get('token');
   const price = task.variables.get('price');
+  const event_id = task.variables.get('event_id');
   const quantity = task.variables.get('quantity');
 
-  const order_date = Date.now();
+  let order_date = moment().format('YYYY-MM-DD hh:mm:ss');
 
   let processVariables = new Variables();
   
@@ -31,20 +34,36 @@ worker.subscribe('create-order', async function({ task, taskService }) {
     order_date
   });
 
-  instance = axios.create(axiosConfig);
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+  };
+
+  instance = axios.create({
+    headers
+  });
+
   try {
-    await instance.post(`${restUrl}/order`, body)
+    await instance.get(`${restUrl}/event/${event_id}`)
       .then(async (res) => {
-        const order_id = res.data.id;
-        
-        console.log('Order created');
-        
-        processVariables.set('order_id', order_id);
-        processVariables.set('total_price', price * quantity);
+        if (res.status === 1) {
+          await instance.post(`${restUrl}/order`, body)
+          .then(async (res) => {
+            const order_id = res.data.id;
+            
+            console.log('Order created');
+            
+            processVariables.set('order_id', order_id);
+            processVariables.set('total_price', price * quantity);
+          })
+          .catch((err) => {
+            processVariables.set('message', err.response.message);
+          })
+        }
       })
       .catch((err) => {
-        console.log(err);
-      })
+        processVariables.set('message', err.response.message);
+      });
   } catch (e) {
     console.log(e);
   } finally {
@@ -98,8 +117,12 @@ worker.subscribe('generate-ticket', async function({task, taskService}) {
 
   try {
     await instance.post(`${restUrl}/ticket`, ticketBody)
-    .then((_) => {
+    .then((res) => {
       console.log('Ticket created');
+
+      processVariables.set("order_id", res.order_id);
+      processVariables.set("event_id", res.event_id);
+      processVariables.set("price", res.price);
     })
     .catch((err) => {
       console.log(err);
