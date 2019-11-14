@@ -36,7 +36,7 @@ worker.subscribe('create-order', async function({ task, taskService }) {
 
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
+    'Authorization': `JWT ${token}`,
   };
 
   instance = axios.create({
@@ -46,7 +46,7 @@ worker.subscribe('create-order', async function({ task, taskService }) {
   try {
     await instance.get(`${restUrl}/event/${event_id}`)
       .then(async (res) => {
-        if (res.status === 1) {
+        if (res.data.status === 1) {
           await instance.post(`${restUrl}/order`, body)
           .then(async (res) => {
             const order_id = res.data.id;
@@ -57,6 +57,8 @@ worker.subscribe('create-order', async function({ task, taskService }) {
             processVariables.set('total_price', price * quantity);
           })
           .catch((err) => {
+            console.log(err);
+
             processVariables.set('message', err.response.message);
           })
         }
