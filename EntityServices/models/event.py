@@ -15,8 +15,9 @@ class EventModel(db.Model):
     owner = db.Column(db.String(80))
     status = db.Column(db.Integer)
     quota = db.Column(db.Integer)
+    price = db.Column(db.String(80))
 
-    def __init__(self, name, category, location, start_time, end_time, event_date, owner, status, quota):
+    def __init__(self, name, category, location, start_time, end_time, event_date, owner, status, quota, price):
         self.name = name
         self.category = category
         self.location = location
@@ -26,6 +27,7 @@ class EventModel(db.Model):
         self.owner = owner
         self.status = status
         self.quota = quota
+        self.price = price
 
     def json(self):
         return {
@@ -38,7 +40,8 @@ class EventModel(db.Model):
             'event_date': self.event_date.strftime('%Y-%m-%d %H:%M:%S'),
             'owner': self.owner,
             'status': self.status,
-            'quota': self.quota
+            'quota': self.quota,
+            'price': self.price
         }
 
     @classmethod

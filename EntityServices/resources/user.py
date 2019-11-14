@@ -58,7 +58,7 @@ class User(Resource):
     def put(self, id):
 
         if (int(id) == current_identity.id):
-            
+
             if (data['role']):
                 if (data['role'] != "customer" and data['role'] != "partner"):
                     return {'message': 'Invalid role'}, 400
@@ -87,9 +87,16 @@ class User(Resource):
             return {'message': 'Method not allowed for this user'}, 400
 
 
-
 class UserList(Resource):
 
     @jwt_required()
     def get(self):
         return {'users': [user.json() for user in UserModel.query.all()]}
+
+
+class UserDetail(Resource):
+
+    @jwt_required()
+    def get(self):
+        user = UserModel.find_by_id(current_identity.id)
+        return user.json()

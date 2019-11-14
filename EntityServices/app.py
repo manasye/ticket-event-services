@@ -6,20 +6,22 @@ from security import authenticate, identity
 from resources.event import EventPost, EventList, EventSearch, Event, EventBook, EventSortTime
 from resources.ticket import TicketPost, TicketList, Ticket, TicketOrder
 from resources.order import OrderPost, OrderList, Order, OrderUser
-from resources.user import UserRegister, User, UserList
+from resources.user import UserRegister, User, UserList, UserDetail
+
+import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_AUTH_URL_RULE'] = '/user/auth'
-app.config['JWT_EXPIRATION_DELTA'] = 3600 # 1 hour
+app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(days=1)  # 1 day
 app.secret_key = 'king'
 api = Api(app)
 
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
 
 
 jwt = JWT(app, authenticate, identity)  # /user/auth
@@ -41,6 +43,7 @@ api.add_resource(OrderUser, '/orders/user/<string:user_id>')
 api.add_resource(UserRegister, '/user')
 api.add_resource(User, '/user/<string:id>')
 api.add_resource(UserList, '/users')
+api.add_resource(UserDetail, '/user/detail')
 
 
 if __name__ == '__main__':

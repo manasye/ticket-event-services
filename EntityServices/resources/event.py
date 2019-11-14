@@ -16,6 +16,7 @@ class Event(Resource):
     parser.add_argument('owner')
     parser.add_argument('status')
     parser.add_argument('quota')
+    parser.add_argument('price')
 
     def get(self, id):
         try:
@@ -45,7 +46,7 @@ class Event(Resource):
             data.end_time, '%Y-%m-%d %H:%M:%S')
         data.event_date = datetime.datetime.strptime(
             data.event_date, '%Y-%m-%d %H:%M:%S')
-        
+
         event = EventModel.find_by_id(id)
 
         if event is None:
@@ -60,6 +61,7 @@ class Event(Resource):
             event.owner = data['owner'] or event.owner
             event.status = data['status'] or event.status
             event.quota = data['quota'] or event.quota
+            event.price = data['price'] or event.price
 
         event.save_to_db()
         return event.json()
@@ -85,6 +87,7 @@ class EventPost(Resource):
     parser.add_argument('owner')
     parser.add_argument('status')
     parser.add_argument('quota')
+    parser.add_argument('price')
 
     @jwt_required()
     def post(self):
