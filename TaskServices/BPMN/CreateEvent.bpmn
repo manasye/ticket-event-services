@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_1u6r9h9">
     <bpmn:participant id="Participant_15nbc7f" name="E-Ticketing" processRef="Process_1w1300q" />
   </bpmn:collaboration>
-  <bpmn:process id="CreateEvent" isExecutable="true">
+  <bpmn:process id="Process_1w1300q" isExecutable="true">
     <bpmn:laneSet id="LaneSet_01vaidl">
       <bpmn:lane id="Lane_04vu77z" name="Penyelenggara Event">
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
