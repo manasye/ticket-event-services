@@ -172,7 +172,7 @@ worker.subscribe('send-payment', async function({ task, taskService }){
     await instance.get(`${paymentUrl}`)
       .then(async (res) => {
         console.log(res.status);
-        if(res.status == 200){
+        if(res.status == 200 || res.status == 201){
           processVariables.set('status_payment', 'success');
         }
         else {
