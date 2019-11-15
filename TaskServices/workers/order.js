@@ -3,8 +3,8 @@ const moment = require('moment');
 let axios = require('axios');
 
 const config = { baseUrl: 'http://localhost:8080/engine-rest', use: logger, asyncResponseTimeout: 10000 };
-const restUrl = 'https://ticket-soa.herokuapp.com';
-const paymentUrl = 'http//127.0.0.1:80';
+const restUrl = 'http://localhost:5000';
+const paymentUrl = 'http://127.0.0.1:8081';
 
 // create a Client instance with custom configuration
 const worker = new Client(config);
@@ -98,7 +98,6 @@ worker.subscribe('create-order', async function({ task, taskService }) {
 
   // User entered event's id
   if(event_name_id.match(/^[0-9]+$/) != null){
-    console.log("Event id");
     event_id = parseInt(event_name_id)
   }
   // User entered event's name
@@ -124,6 +123,7 @@ worker.subscribe('create-order', async function({ task, taskService }) {
   }
 
   let processVariables = new Variables();
+  processVariables.set('event_id', event_id);
   
   const body = JSON.stringify({
     user_id,
@@ -169,10 +169,16 @@ worker.subscribe('send-payment', async function({ task, taskService }){
   instance = axios.create({});
 
   try{
-    await instance.get(`${paymentUrl}`, {})
+    await instance.get(`${paymentUrl}`)
       .then(async (res) => {
         console.log(res.status);
-        processVariables.set('status_payment', res.status);
+        if(res.status == 200){
+          processVariables.set('status_payment', 'success');
+        }
+        else {
+          processVariables.set('status_payment', 'failed');
+        }
+        
       })
   }
   catch(e){
@@ -187,9 +193,10 @@ worker.subscribe('send-payment', async function({ task, taskService }){
  * Receive Payment
  */
 
+ /*
 worker.subscribe('receive-payment', async function({ task, taskService }) {
   const order_id = task.variables.get("order_id");
-  const success = task.variables.get("success");
+  const success = task.variables.get("status_payment");
 
   instance = axios.create(axiosConfig);
 
@@ -207,33 +214,31 @@ worker.subscribe('receive-payment', async function({ task, taskService }) {
     await taskService.complete(task, processVariables);
   }
 });
+*/
 
 /** Generate ticket */
 worker.subscribe('generate-ticket', async function({task, taskService}) {
   const order_id = task.variables.get('order_id');
   const event_id = task.variables.get('event_id');
   const seat_num = task.variables.get('seat_num');
-  const price = task.variables.get('price');
-  const quantity = task.variables.get('quantity');
+  const price = task.variables.get('total_price');
 
   const ticketBody = JSON.stringify({
     order_id,
     event_id,
-    seat_num,
     price,
+    seat_num,
     quantity
   });
 
   instance = axios.create(axiosConfig);
+  console.log(ticketBody);
 
   try {
     await instance.post(`${restUrl}/ticket`, ticketBody)
     .then((res) => {
+      console.log(res);
       console.log('Ticket created');
-
-      processVariables.set("order_id", res.order_id);
-      processVariables.set("event_id", res.event_id);
-      processVariables.set("price", res.price);
     })
     .catch((err) => {
       console.log(err);
