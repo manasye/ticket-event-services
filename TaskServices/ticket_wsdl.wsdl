@@ -1,0 +1,113 @@
+<definitions 
+	name="OrderService"
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="ticketforevent.services.wsdl"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsd1="ticketforevent.services.xsd"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	targetNamespace="ticketforevent.services.wsdl">
+
+	<types>
+		<schema xmlns="http://www.w3.org/2000/10/XMLSchema" targetNamespace="ticketforevent.services.xsd">
+			<element name = "participant">
+				<complexType>
+					<all>
+						<element name = "id" type = "string" />
+						<element name = "name" type = "string" />
+						<element name = "dob" type = "date" />
+					</all>
+				</complexType>
+			</element>
+
+			<element name = "event">
+				<complexType>
+					<all>
+						<element name = "id" 	type = "string" />
+						<element name = "name" type = "string" />
+						<element name = "category" type = "string" />
+						<element name = "location" type = "string" />
+						<element name = "description" type = "string" />
+						<element name = "event_date" type = "date" />
+						<element name = "start_time" type = "time" />
+						<element name = "end_time" type = "time" />
+						<element name = "status" type = "integer" />
+						<element name = "owner" type = "string" />
+					</all>
+				</complexType>
+			</element>
+
+			<element name = "ticket">
+				<complexType>
+					<all>
+						<element name = "id" type = "string" />
+						<element name = "event_id" type = "string" />
+						<element name = "category" type = "string" />
+						<element name = "ticket_count" type = "integer" />
+						<element name = "ticket_avail" type = "integer" />
+						<element name = "price" type = "string" />
+						<element name = "status" type = "integer" />
+					</all>
+				</complexType>
+			</element>
+
+			<element name = "order">
+				<complexType>
+					<all>
+						<element name = "id" type = "string" />
+						<element name = "participant_id" type = "string" />
+						<element name = "ticket_id" type = "string" />
+						<element name = "payment_method" type = "string" />
+					</all>
+				</complexType>
+			</element>
+
+		</schema>
+	</types>
+
+	<!-- Response Messages -->
+	<message name = "returns_order">
+		<part name = "order" type = "order" />
+	</message>
+
+	<!-- Request Messages -->
+	<message name = "post_order">
+		<part name = "participant_id" type = "xsd:participant" />
+		<part name = "ticket_id" type = "xsd:ticket" />
+	</message>
+
+	<!-- Server's Services -->
+	<portType name = "CreateOrder">
+		<operation name = "post_order">
+			<input message = "tns:post_order" />
+			<output message = "tns:returns_order" />
+		</operation>
+	</portType>
+
+	<binding name = "OrderService_webservices" type = "tns:CreateOrder">
+		<soap:binding style = "rpc" transport = "http://schemas.xmlsoap.org/soap/http" />
+		<operation name = "post_order">
+			<soap:operation soapAction = "urn:xmethods-delayed-quotes#post_order" />
+			<input>
+				<soap:body 
+					use = "encoded"
+					namespace="urn:xmethods-delayed-quotes"
+					encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/" />
+			</input>
+			<output>
+				<soap:body 
+					use = "encoded"
+					namespace="urn:xmethods-delayed-quotes"
+					encodingStyle = "http://schemas.xmlsoap.org/soap/encoding/" />
+			</output>
+		</operation>
+	</binding>
+
+	<service name = "TicketForEvent">
+		<port name = "TicketForEvent_0" binding = "OrderService_webservices"  >
+			<soap:address location = "http://127.0.0.1/ticket/create/" />
+		</port>
+	</service>
+
+</definitions>
