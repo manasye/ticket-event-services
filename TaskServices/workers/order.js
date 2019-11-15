@@ -222,6 +222,8 @@ worker.subscribe('generate-ticket', async function({task, taskService}) {
   const event_id = task.variables.get('event_id');
   const seat_num = task.variables.get('seat_num');
   const price = task.variables.get('total_price');
+  const quantity = task.variables.get('quantity');
+  const token = task.variables.get('token');
 
   const ticketBody = JSON.stringify({
     order_id,
@@ -231,8 +233,12 @@ worker.subscribe('generate-ticket', async function({task, taskService}) {
     quantity
   });
 
-  instance = axios.create(axiosConfig);
-  console.log(ticketBody);
+  instance = axios.create({
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `JWT ${token}`
+    }
+  });
 
   try {
     await instance.post(`${restUrl}/ticket`, ticketBody)
