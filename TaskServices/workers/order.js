@@ -3,7 +3,7 @@ const moment = require('moment');
 let axios = require('axios');
 
 const config = { baseUrl: 'http://localhost:8080/engine-rest', use: logger, asyncResponseTimeout: 10000 };
-const restUrl = 'http://localhost:5000';
+const restUrl = 'https://ticket-soa.herokuapp.com';
 const paymentUrl = 'http://127.0.0.1:8081';
 
 // create a Client instance with custom configuration
