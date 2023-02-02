@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.0",
-    "camunda-external-task-client-js": "^1.2.0",
+    "camunda-external-task-client-js": "^3.0.0-alpha1",
     "moment": "^2.24.0"
   }
 }
